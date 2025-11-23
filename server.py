@@ -1,10 +1,18 @@
 import os
 import json
 import asyncio
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory, abort
 from sequential_agents import SequentialFlowAgent
 
-app = Flask(__name__)
+STATIC_DIR = os.getenv("STATIC_DIR", os.path.join(os.path.dirname(__file__), "static"))
+app = Flask(__name__, static_folder=STATIC_DIR, static_url_path="/")
+
+@app.get("/static/<path:filename>")
+def serve_static(filename: str):
+    try:
+        return send_from_directory(STATIC_DIR, filename)
+    except Exception:
+        abort(404)
 
 @app.get("/generate_doc")
 def generate_doc():
