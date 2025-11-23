@@ -17,20 +17,21 @@ def serve_static(filename: str):
 @app.get("/generate_doc")
 def generate_doc():
     chat_json = request.args.get("chat_data")
+    #print(f"*** chat_data param: {chat_json}")
     if chat_json:
-        try:
-            chat_data = json.loads(chat_json)
-        except Exception:
-            chat_data = []
+        chat_data = chat_json
     else:
         chat_data = [
             {"role": "user", "content": "I agree to sell the car for $8,000."},
             {"role": "assistant", "content": "Please confirm delivery timeline."},
             {"role": "user", "content": "Delivery within 7 days is fine."},
         ]
+    print(f"*** chat_data: {chat_data}")
     passphrase = request.args.get("passphrase", "UltraSecure123")
     flow = SequentialFlowAgent()
     result = asyncio.run(flow.run(raw_messages=chat_data, encrypt_passphrase=passphrase))
+    print("***generate housing contract doc: ***")
+    print(result)
     return jsonify(result)
 
 if __name__ == "__main__":
